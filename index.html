@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Competitor Social Report — 24 May 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --lz: #FF007A;
+    --lz-light: #fff0f3;
+    --sh: #EE4D2D;
+    --sh-light: #fff5f3;
+    --bg: #f4f6f9;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --radius: 12px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header .sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  .header .date-badge {
+    background: rgba(255,255,255,0.1);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    align-items: center;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; }
+  .legend-dot { width: 14px; height: 14px; border-radius: 50%; }
+  .dot-lz { background: var(--lz); }
+  .dot-sh { background: var(--sh); }
+
+  /* Section labels */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin: 32px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* KPI cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    border-top: 3px solid transparent;
+  }
+  .kpi-card.win-lazada { border-top-color: var(--lz); }
+  .kpi-card.win-shopee { border-top-color: var(--sh); }
+  .kpi-card .kpi-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-card .kpi-vals { display: flex; align-items: baseline; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .kpi-card .kpi-lz { font-size: 22px; font-weight: 800; color: var(--lz); }
+  .kpi-card .kpi-sh { font-size: 22px; font-weight: 800; color: var(--sh); }
+  .kpi-card .kpi-vs { font-size: 11px; color: var(--muted); }
+  .kpi-card .kpi-winner { font-size: 10px; font-weight: 700; color: var(--muted); margin-top: 6px; }
+
+  /* Charts */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .chart-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+  .chart-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .chart-card canvas { max-height: 200px; }
+
+  /* Badge */
+  .badge-win {
+    display: inline-block;
+    background: #10b981;
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+  }
+
+  /* Top posts */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 16px;
+  }
+  .posts-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+  .posts-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 14px; }
+  .posts-card h3 .platform-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .tag-ig { background: #e7f0ff; color: #3b5bdb; }
+  .tag-tt { background: #f0f0f0; color: #111; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 10px; text-transform: uppercase; color: var(--muted); font-weight: 700;
+       letter-spacing: 0.5px; padding: 0 8px 10px; text-align: left; }
+  td { padding: 9px 8px; border-top: 1px solid var(--border); vertical-align: top; }
+  td.rank { font-weight: 800; color: var(--muted); font-size: 13px; width: 24px; }
+  td.caption { font-size: 12px; line-height: 1.4; max-width: 300px; }
+  td.caption a { color: var(--text); text-decoration: none; }
+  td.caption a:hover { color: var(--lz); text-decoration: underline; }
+  td.num { font-size: 12px; font-weight: 600; text-align: right; white-space: nowrap; }
+
+  /* Content mix */
+  .mix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .mix-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .mix-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 14px; text-align: left; }
+  .mix-card canvas { max-height: 180px; }
+
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 32px 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Competitor Social Report</h1>
+    <div class="sub">Lazada Internal Use Only &nbsp;·&nbsp; Data: public profiles via Apify &nbsp;·&nbsp; 15 most recent posts per platform</div>
+  </div>
+  <div class="date-badge">24 May 2026</div>
+</div>
+
+<div class="container">
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-lz"></div>Lazada SG</div>
+    <div class="legend-item"><div class="legend-dot dot-sh"></div>Shopee SG</div>
+  </div>
+
+  <!-- KPI SUMMARY -->
+  <div class="section-label">Key Metrics at a Glance</div>
+  <div class="kpi-grid">
+
+    <div class="kpi-card win-lazada">
+      <div class="kpi-label">TikTok Plays</div>
+      <div class="kpi-vals">
+        <span class="kpi-lz">19.9M</span>
+        <span class="kpi-vs">vs</span>
+        <span class="kpi-sh">2.7M</span>
+      </div>
+      <div class="kpi-winner">Lazada leads &nbsp; <span class="badge-win">WIN</span> </div>
+    </div>
+
+    <div class="kpi-card win-lazada">
+      <div class="kpi-label">TikTok Likes</div>
+      <div class="kpi-vals">
+        <span class="kpi-lz">35.7K</span>
+        <span class="kpi-vs">vs</span>
+        <span class="kpi-sh">10.5K</span>
+      </div>
+      <div class="kpi-winner">Lazada leads &nbsp; <span class="badge-win">WIN</span> </div>
+    </div>
+
+    <div class="kpi-card win-shopee">
+      <div class="kpi-label">Instagram Plays</div>
+      <div class="kpi-vals">
+        <span class="kpi-lz">33.0K</span>
+        <span class="kpi-vs">vs</span>
+        <span class="kpi-sh">72.1K</span>
+      </div>
+      <div class="kpi-winner">Shopee leads &nbsp;  <span class="badge-win">WIN</span></div>
+    </div>
+
+    <div class="kpi-card win-shopee">
+      <div class="kpi-label">Instagram Likes</div>
+      <div class="kpi-vals">
+        <span class="kpi-lz">796</span>
+        <span class="kpi-vs">vs</span>
+        <span class="kpi-sh">1.4K</span>
+      </div>
+      <div class="kpi-winner">Shopee leads &nbsp;  <span class="badge-win">WIN</span></div>
+    </div>
+
+    <div class="kpi-card win-shopee">
+      <div class="kpi-label">Instagram Avg ER</div>
+      <div class="kpi-vals">
+        <span class="kpi-lz">0.22%</span>
+        <span class="kpi-vs">vs</span>
+        <span class="kpi-sh">1.5%</span>
+      </div>
+      <div class="kpi-winner">Shopee leads &nbsp;  <span class="badge-win">WIN</span></div>
+    </div>
+
+  </div>
+
+  <!-- TIKTOK CHARTS -->
+  <div class="section-label">TikTok Performance</div>
+  <div class="chart-grid">
+
+    <div class="chart-card">
+      <h3>Plays &amp; Likes</h3>
+      <canvas id="ttPlaysLikes"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Comments &amp; Shares</h3>
+      <canvas id="ttComShares"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Avg Engagement Rate (%)</h3>
+      <canvas id="ttER"></canvas>
+    </div>
+
+  </div>
+
+  <!-- INSTAGRAM CHARTS -->
+  <div class="section-label">Instagram Performance</div>
+  <div class="chart-grid">
+
+    <div class="chart-card">
+      <h3>Plays &amp; Likes</h3>
+      <canvas id="igPlaysLikes"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Comments</h3>
+      <canvas id="igComments"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Avg Engagement Rate (%)</h3>
+      <canvas id="igER"></canvas>
+    </div>
+
+  </div>
+
+  <!-- CONTENT MIX -->
+  <div class="section-label">Instagram Content Mix</div>
+  <div class="mix-grid">
+    <div class="mix-card">
+      <h3>Lazada SG — Content Mix</h3>
+      <canvas id="lzMix"></canvas>
+    </div>
+    <div class="mix-card">
+      <h3>Shopee SG — Content Mix</h3>
+      <canvas id="shMix"></canvas>
+    </div>
+  </div>
+
+  <!-- TOP POSTS -->
+  <div class="section-label">Top Posts</div>
+  <div class="posts-grid">
+
+    <div class="posts-card">
+      <h3>Lazada SG <span class="platform-tag tag-tt">TikTok</span> — Top 3 by Plays</h3>
+      <table>
+        <thead><tr><th>#</th><th>Caption</th><th>Plays</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead>
+        <tbody>
+            <tr>
+              <td class="rank">1</td>
+              <td class="caption"><a href="https://www.tiktok.com/@lazada_sg/video/7628821660543569160" target="_blank">K-pop stans, don’t wait till these go OOS 👀 100% authentic albums from Gmarket K…</a></td>
+              <td class="num">3.0M</td>
+              <td class="num">3.4K</td>
+              <td class="num">14</td>
+              <td class="num">189</td>
+            </tr>
+            <tr>
+              <td class="rank">2</td>
+              <td class="caption"><a href="https://www.tiktok.com/@lazada_sg/video/7634737332926598408" target="_blank">Nothing a little shopping can’t fix. 🫶🏻  Turn the day around with 80% off LazFla…</a></td>
+              <td class="num">2.7M</td>
+              <td class="num">4.0K</td>
+              <td class="num">16</td>
+              <td class="num">135</td>
+            </tr>
+            <tr>
+              <td class="rank">3</td>
+              <td class="caption"><a href="https://www.tiktok.com/@lazada_sg/video/7631513194179169557" target="_blank">Even mother nature said so… ☁ No choice but to shop 100% authentic global brands…</a></td>
+              <td class="num">2.6M</td>
+              <td class="num">3.9K</td>
+              <td class="num">8</td>
+              <td class="num">124</td>
+            </tr></tbody>
+      </table>
+    </div>
+
+    <div class="posts-card">
+      <h3>Shopee SG <span class="platform-tag tag-tt">TikTok</span> — Top 3 by Plays</h3>
+      <table>
+        <thead><tr><th>#</th><th>Caption</th><th>Plays</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead>
+        <tbody>
+            <tr>
+              <td class="rank">1</td>
+              <td class="caption"><a href="https://www.tiktok.com/@shopeesg/video/7009901495223094529" target="_blank">Grab up to $50 off upsized cashback on all-day vouchers this 25 Sep during the S…</a></td>
+              <td class="num">1.6M</td>
+              <td class="num">3.7K</td>
+              <td class="num">33</td>
+              <td class="num">84</td>
+            </tr>
+            <tr>
+              <td class="rank">2</td>
+              <td class="caption"><a href="https://www.tiktok.com/@shopeesg/video/7640007150219496725" target="_blank">too excited already 😝…</a></td>
+              <td class="num">206.3K</td>
+              <td class="num">2.6K</td>
+              <td class="num">26</td>
+              <td class="num">227</td>
+            </tr>
+            <tr>
+              <td class="rank">3</td>
+              <td class="caption"><a href="https://www.tiktok.com/@shopeesg/video/7641071231738858772" target="_blank">comment your favs!! 🌸 #styledbyshopee…</a></td>
+              <td class="num">156.2K</td>
+              <td class="num">757</td>
+              <td class="num">6</td>
+              <td class="num">49</td>
+            </tr></tbody>
+      </table>
+    </div>
+
+    <div class="posts-card">
+      <h3>Lazada SG <span class="platform-tag tag-ig">Instagram</span> — Top 3 by Likes</h3>
+      <table>
+        <thead><tr><th>#</th><th>Caption</th><th>Plays</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead>
+        <tbody>
+            <tr>
+              <td class="rank">1</td>
+              <td class="caption"><a href="https://www.instagram.com/p/DYi9nAhku4o/" target="_blank">The mascot cam caught Lazzie working overtime again ⚾   Good thing LazMall has a…</a></td>
+              <td class="num">32.4K</td>
+              <td class="num">230</td>
+              <td class="num">3</td>
+              <td class="num">0</td>
+            </tr>
+            <tr>
+              <td class="rank">2</td>
+              <td class="caption"><a href="https://www.instagram.com/p/DYI_7H_DZc3/" target="_blank">The spa may be homemade, but the relaxation is 5-star. 💆‍♀️🫧  Shop 100% authenti…</a></td>
+              <td class="num">0</td>
+              <td class="num">226</td>
+              <td class="num">0</td>
+              <td class="num">0</td>
+            </tr>
+            <tr>
+              <td class="rank">3</td>
+              <td class="caption"><a href="https://www.instagram.com/p/DYipA_bDQy3/" target="_blank">Some things spark joy. Some things go straight into cart. 👀🤎 Which one is your p…</a></td>
+              <td class="num">0</td>
+              <td class="num">105</td>
+              <td class="num">3</td>
+              <td class="num">0</td>
+            </tr></tbody>
+      </table>
+    </div>
+
+    <div class="posts-card">
+      <h3>Shopee SG <span class="platform-tag tag-ig">Instagram</span> — Top 3 by Likes</h3>
+      <table>
+        <thead><tr><th>#</th><th>Caption</th><th>Plays</th><th>Likes</th><th>Comments</th><th>Shares</th></tr></thead>
+        <tbody>
+            <tr>
+              <td class="rank">1</td>
+              <td class="caption"><a href="https://www.instagram.com/p/DYVxBoSFug3/" target="_blank">[𝗢𝗻𝗹𝗶𝗻𝗲 𝗣𝗿𝗼𝗺𝗼] Even CRYBABY can’t hold back this wave 🌊  Dive into our 𝗛𝗘𝗔𝗟 𝗧𝗛𝗘 …</a></td>
+              <td class="num">0</td>
+              <td class="num">521</td>
+              <td class="num">0</td>
+              <td class="num">0</td>
+            </tr>
+            <tr>
+              <td class="rank">2</td>
+              <td class="caption"><a href="https://www.instagram.com/p/DYhm_EqBuJW/" target="_blank">croissants but make it mini 🥐 #shopeehaul…</a></td>
+              <td class="num">8.7K</td>
+              <td class="num">325</td>
+              <td class="num">2</td>
+              <td class="num">0</td>
+            </tr>
+            <tr>
+              <td class="rank">3</td>
+              <td class="caption"><a href="https://www.instagram.com/p/DYYqXYtkgLx/" target="_blank">Extra squish, extra cute 🫶 #shopeehaul…</a></td>
+              <td class="num">5.3K</td>
+              <td class="num">135</td>
+              <td class="num">0</td>
+              <td class="num">0</td>
+            </tr></tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  Always Better ♥ &nbsp;·&nbsp; Lazada Internal Use Only &nbsp;·&nbsp; Generated 24 May 2026 &nbsp;·&nbsp; Data via Apify
+</div>
+
+<script>
+const LZ = "#FF007A";
+const LZ_A = "rgba(255,0,122,0.15)";
+const SH = "#EE4D2D";
+const SH_A = "rgba(238,77,45,0.15)";
+
+const opts = {
+  responsive: true,
+  plugins: { legend: { display: false } },
+  scales: {
+    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+    y: { grid: { color: "#f0f0f0" }, ticks: { font: { size: 11 } } }
+  }
+};
+
+// TikTok: Plays & Likes
+new Chart(document.getElementById("ttPlaysLikes"), {
+  type: "bar",
+  data: {
+    labels: ["TT Plays", "TT Likes"],
+    datasets: [
+      { label: "Lazada", data: [19891923, 35712], backgroundColor: LZ, borderRadius: 6 },
+      { label: "Shopee", data: [2718480, 10525], backgroundColor: SH, borderRadius: 6 }
+    ]
+  },
+  options: { ...opts, plugins: { legend: { display: true, labels: { font: { size: 11 } } } } }
+});
+
+// TikTok: Comments & Shares
+new Chart(document.getElementById("ttComShares"), {
+  type: "bar",
+  data: {
+    labels: ["TT Comments", "TT Shares"],
+    datasets: [
+      { label: "Lazada", data: [203, 1141], backgroundColor: LZ, borderRadius: 6 },
+      { label: "Shopee", data: [137, 819], backgroundColor: SH, borderRadius: 6 }
+    ]
+  },
+  options: { ...opts, plugins: { legend: { display: true, labels: { font: { size: 11 } } } } }
+});
+
+// TikTok ER
+new Chart(document.getElementById("ttER"), {
+  type: "bar",
+  data: {
+    labels: ["Lazada SG", "Shopee SG"],
+    datasets: [{
+      data: [0.36, 0.65],
+      backgroundColor: [LZ, SH],
+      borderRadius: 6
+    }]
+  },
+  options: opts
+});
+
+// Instagram: Plays & Likes
+new Chart(document.getElementById("igPlaysLikes"), {
+  type: "bar",
+  data: {
+    labels: ["IG Plays", "IG Likes"],
+    datasets: [
+      { label: "Lazada", data: [32956, 796], backgroundColor: LZ, borderRadius: 6 },
+      { label: "Shopee", data: [72114, 1414], backgroundColor: SH, borderRadius: 6 }
+    ]
+  },
+  options: { ...opts, plugins: { legend: { display: true, labels: { font: { size: 11 } } } } }
+});
+
+// Instagram Comments
+new Chart(document.getElementById("igComments"), {
+  type: "bar",
+  data: {
+    labels: ["Lazada SG", "Shopee SG"],
+    datasets: [{
+      data: [26, 14],
+      backgroundColor: [LZ, SH],
+      borderRadius: 6
+    }]
+  },
+  options: opts
+});
+
+// Instagram ER
+new Chart(document.getElementById("igER"), {
+  type: "bar",
+  data: {
+    labels: ["Lazada SG", "Shopee SG"],
+    datasets: [{
+      data: [0.22, 1.5],
+      backgroundColor: [LZ, SH],
+      borderRadius: 6
+    }]
+  },
+  options: opts
+});
+
+// Content mix donuts
+new Chart(document.getElementById("lzMix"), {
+  type: "doughnut",
+  data: {
+    labels: ["Videos / Reels", "Static Images", "Carousels"],
+    datasets: [{
+      data: [2, 13, 0],
+      backgroundColor: ["#FF007A", "#ff66b2", "#ffb3d9"],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    cutout: "65%",
+    plugins: { legend: { position: "right", labels: { font: { size: 11 } } } }
+  }
+});
+
+new Chart(document.getElementById("shMix"), {
+  type: "doughnut",
+  data: {
+    labels: ["Videos / Reels", "Static Images", "Carousels"],
+    datasets: [{
+      data: [12, 0, 3],
+      backgroundColor: ["#EE4D2D", "#f4845f", "#f9bfb0"],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    cutout: "65%",
+    plugins: { legend: { position: "right", labels: { font: { size: 11 } } } }
+  }
+});
+</script>
+</body>
+</html>
