@@ -1,0 +1,134 @@
+name: Social Media Data Collection
+
+on:
+  workflow_dispatch:
+    inputs:
+      apify_token:
+        description: 'Apify API token'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  collect-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: claude/nice-edison-IjPJT
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Collect Apify social media data
+        env:
+          APIFY_TOKEN: ${{ inputs.apify_token }}
+        run: |
+          python3 << 'PYEOF'
+          import requests, json, time, os
+
+          TOKEN = os.environ["APIFY_TOKEN"]
+          HEADERS = {"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"}
+
+          def start_run(actor, body):
+              r = requests.post(
+                  f"https://api.apify.com/v2/acts/{actor}/runs",
+                  headers=HEADERS, json=body, timeout=60
+              )
+              r.raise_for_status()
+              return r.json()["data"]["id"]
+
+          def fetch_items(dataset_id):
+              r = requests.get(
+                  f"https://api.apify.com/v2/datasets/{dataset_id}/items?limit=50",
+                  headers=HEADERS, timeout=60
+              )
+              r.raise_for_status()
+              return r.json()
+
+          print("Starting all 4 Apify runs...", flush=True)
+
+          lazada_ig_run = start_run("apify~instagram-scraper", {
+              "directUrls": ["https://www.instagram.com/Lazada_SG/"],
+              "resultsType": "posts", "resultsLimit": 15, "addParentData": False
+          })
+          print(f"Lazada IG: {lazada_ig_run}", flush=True)
+
+          shopee_ig_run = start_run("apify~instagram-scraper", {
+              "directUrls": ["https://www.instagram.com/shopee_SG/"],
+              "resultsType": "posts", "resultsLimit": 15, "addParentData": False
+          })
+          print(f"Shopee IG: {shopee_ig_run}", flush=True)
+
+          lazada_tt_run = start_run("clockworks~free-tiktok-scraper", {
+              "profiles": ["Lazada_SG"], "resultsPerPage": 15,
+              "shouldDownloadVideos": False, "shouldDownloadCovers": False
+          })
+          print(f"Lazada TT: {lazada_tt_run}", flush=True)
+
+          shopee_tt_run = start_run("clockworks~free-tiktok-scraper", {
+              "profiles": ["shopeesg"], "resultsPerPage": 15,
+              "shouldDownloadVideos": False, "shouldDownloadCovers": False
+          })
+          print(f"Shopee TT: {shopee_tt_run}", flush=True)
+
+          pending = {
+              "lazada_ig": lazada_ig_run,
+              "shopee_ig": shopee_ig_run,
+              "lazada_tt": lazada_tt_run,
+              "shopee_tt": shopee_tt_run
+          }
+          completed = {}
+          deadline = time.time() + 360
+
+          print("Polling...", flush=True)
+          while pending and time.time() < deadline:
+              for name in list(pending.keys()):
+                  run_id = pending[name]
+                  r = requests.get(
+                      f"https://api.apify.com/v2/actor-runs/{run_id}",
+                      headers=HEADERS, timeout=30
+                  )
+                  d = r.json()["data"]
+                  status = d["status"]
+                  print(f"  [{name}] {status}", flush=True)
+                  if status in ("SUCCEEDED", "FAILED", "ABORTED", "TIMED-OUT"):
+                      completed[name] = d
+                      del pending[name]
+              if pending:
+                  time.sleep(10)
+
+          results = {}
+          for name, run_data in completed.items():
+              if run_data["status"] == "SUCCEEDED":
+                  items = fetch_items(run_data["defaultDatasetId"])
+                  results[name] = items
+                  print(f"{name}: {len(items)} items", flush=True)
+              else:
+                  results[name] = []
+                  print(f"{name}: {run_data['status']}", flush=True)
+
+          for name in pending:
+              results[name] = []
+              print(f"{name}: timed out", flush=True)
+
+          with open("social_media_data.json", "w") as f:
+              json.dump(results, f, indent=2)
+
+          print(f"Done. Total posts: {sum(len(v) for v in results.values())}", flush=True)
+          PYEOF
+
+      - name: Commit and push results
+        run: |
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions Bot"
+          git add social_media_data.json
+          git diff --cached --quiet && echo "No changes to commit" || (
+            git commit -m "data: social media scrape $(date '+%d %b %Y')" &&
+            git push origin claude/nice-edison-IjPJT
+          )
