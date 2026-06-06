@@ -1,0 +1,130 @@
+Competitor Social Report — 06 Jun 2026
+============================================================
+  ⚠  DEMO DATA — re-run pipeline.py with APIFY_API_KEY for live figures
+
+HEAD-TO-HEAD COMPARISON
+------------------------------------------------------------
+
+Instagram
+  Likes      Lazada   ███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  90.8K
+             Shopee   █████████████████████████████░░░░░░░░░░░  243.3K
+  Comments   Lazada   ███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  2.3K
+             Shopee   █████████████████████████████░░░░░░░░░░░  6.3K
+  Avg ER%    Lazada  0.537%   Shopee  0.615%
+
+TikTok
+  Likes      Lazada   ███████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  171.9K
+             Shopee   █████████████████████████████░░░░░░░░░░░  445.3K
+  Comments   Lazada   ████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░  8.9K
+             Shopee   ████████████████████████████░░░░░░░░░░░░  21.9K
+  Plays      Lazada   ██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  4.0M
+             Shopee   ██████████████████████████████░░░░░░░░░░  11.7M
+  Shares     Lazada   ██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  22.1K
+             Shopee   ██████████████████████████████░░░░░░░░░░  64.4K
+  Avg ER%    Lazada  2.588%   Shopee  2.133%
+
+CONTENT MIX  (posts scraped: 28)
+------------------------------------------------------------
+
+Instagram  [14-char bar = proportion of 28 posts that are video/reels]
+  Lazada_SG       ██████████████  28/28
+  Shopee_SG       ██████████████  28/28
+
+TikTok  [14-char bar = proportion of 28 posts that are video/reels]
+  Lazada_SG       ██████████████  28/28
+  Shopee_SG       ██████████████  28/28
+
+TOP 5 POSTS PER BRAND PER PLATFORM
+------------------------------------------------------------
+
+Lazada_SG — Instagram  (ranked by likes + comments)
+  1. Likes 5.5K  Comments 68
+     https://www.instagram.com/p/demo025/
+     Demo caption for post 26 — special offers and promotions inside!
+  2. Likes 5.1K  Comments 29
+     https://www.instagram.com/p/demo026/
+     Demo caption for post 27 — special offers and promotions inside!
+  3. Likes 5.1K  Comments 76
+     https://www.instagram.com/p/demo003/
+     Demo caption for post 4 — special offers and promotions inside!
+  4. Likes 4.4K  Comments 48
+     https://www.instagram.com/p/demo008/
+     Demo caption for post 9 — special offers and promotions inside!
+  5. Likes 4.3K  Comments 36
+     https://www.instagram.com/p/demo027/
+     Demo caption for post 28 — special offers and promotions inside!
+
+Shopee_SG — Instagram  (ranked by likes + comments)
+  1. Likes 13.8K  Comments 417
+     https://www.instagram.com/p/demo021/
+     Demo caption for post 22 — special offers and promotions inside!
+  2. Likes 13.1K  Comments 243
+     https://www.instagram.com/p/demo020/
+     Demo caption for post 21 — special offers and promotions inside!
+  3. Likes 12.1K  Comments 203
+     https://www.instagram.com/p/demo023/
+     Demo caption for post 24 — special offers and promotions inside!
+  4. Likes 11.6K  Comments 107
+     https://www.instagram.com/p/demo012/
+     Demo caption for post 13 — special offers and promotions inside!
+  5. Likes 10.7K  Comments 216
+     https://www.instagram.com/p/demo006/
+     Demo caption for post 7 — special offers and promotions inside!
+
+Lazada_SG — TikTok  (ranked by plays)
+  1. Plays 226.9K  Likes 3.9K  Shares 749
+     https://tiktok.com/@demouser0/video/demo7000018
+     Demo TikTok caption 19 #lazada #shopee #sale #singapore
+  2. Plays 216.6K  Likes 5.8K  Shares 1.1K
+     https://tiktok.com/@demouser1/video/demo7000009
+     Demo TikTok caption 10 #lazada #shopee #sale #singapore
+  3. Plays 216.6K  Likes 4.6K  Shares 1.1K
+     https://tiktok.com/@demouser0/video/demo7000006
+     Demo TikTok caption 7 #lazada #shopee #sale #singapore
+  4. Plays 209.1K  Likes 6.1K  Shares 386
+     https://tiktok.com/@demouser1/video/demo7000013
+     Demo TikTok caption 14 #lazada #shopee #sale #singapore
+  5. Plays 205.0K  Likes 5.8K  Shares 308
+     https://tiktok.com/@demouser1/video/demo7000003
+     Demo TikTok caption 4 #lazada #shopee #sale #singapore
+
+Shopee_SG — TikTok  (ranked by plays)
+  1. Plays 689.8K  Likes 22.4K  Shares 1.3K
+     https://tiktok.com/@demouser0/video/demo7000020
+     Demo TikTok caption 21 #lazada #shopee #sale #singapore
+  2. Plays 652.1K  Likes 20.9K  Shares 3.0K
+     https://tiktok.com/@demouser0/video/demo7000008
+     Demo TikTok caption 9 #lazada #shopee #sale #singapore
+  3. Plays 629.5K  Likes 18.0K  Shares 1.3K
+     https://tiktok.com/@demouser0/video/demo7000024
+     Demo TikTok caption 25 #lazada #shopee #sale #singapore
+  4. Plays 590.6K  Likes 11.4K  Shares 2.1K
+     https://tiktok.com/@demouser1/video/demo7000023
+     Demo TikTok caption 24 #lazada #shopee #sale #singapore
+  5. Plays 546.6K  Likes 15.0K  Shares 1.4K
+     https://tiktok.com/@demouser0/video/demo7000002
+     Demo TikTok caption 3 #lazada #shopee #sale #singapore
+
+STATS SUMMARY
+------------------------------------------------------------
+Brand          Platform     Posts   Likes      Comments   Plays      Shares     Avg ER%
+--------------------------------------------------------------------------------
+Lazada_SG      Instagram    28      90.8K      2.3K       0          0          0.537%
+Shopee_SG      Instagram    28      243.3K     6.3K       0          0          0.615%
+Lazada_SG      TikTok       28      171.9K     8.9K       4.0M       22.1K      2.588%
+Shopee_SG      TikTok       28      445.3K     21.9K      11.7M      64.4K      2.133%
+
+EXECUTIVE SUMMARY
+------------------------------------------------------------
+
+On TikTok, Shopee_SG dominates video reach with 7.7M more plays than Lazada_SG
+across the most-recent 28 posts, signalling a stronger short-video content
+cadence. On Instagram, Shopee_SG leads engagement rate by 0.078 percentage
+points over Lazada_SG, indicating a more interactive audience relationship.
+Lazada_SG sits 152.5K likes behind Shopee_SG on Instagram — bridging this gap
+via high-frequency reels and shoppable carousel posts is the single highest-
+ROI Instagram action for the next quarter.
+
+============================================================
+Report generated: 2026-06-06 01:06 UTC
+⚠  DEMO DATA — figures are synthetic. Re-run pipeline.py with APIFY_API_KEY.
