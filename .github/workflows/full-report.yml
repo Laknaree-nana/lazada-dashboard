@@ -1,0 +1,24 @@
+name: Full Competitor Social Report
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run full report pipeline
+        env:
+          APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
+        run: python3 scripts/report_pipeline.py > report_output.json
+      - name: Commit report output
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add report_output.json
+          git diff --staged --quiet || git commit -m "data: competitor social report $(date -u +%Y-%m-%d)"
+          git push
