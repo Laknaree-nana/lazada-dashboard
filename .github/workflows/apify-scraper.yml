@@ -1,6 +1,11 @@
 name: Competitor Social Report Scraper
 on:
   workflow_dispatch:
+    inputs:
+      apify_api_key:
+        description: 'Apify API Key'
+        required: true
+        type: string
 permissions:
   contents: write
 jobs:
@@ -12,6 +17,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Apify scraper
+        env:
+          APIFY_API_KEY: ${{ inputs.apify_api_key }}
         run: python3 scripts/apify_scraper.py > apify_results.json
       - name: Commit results
         run: |
