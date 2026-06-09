@@ -6,19 +6,20 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run Apify scraper
+          ref: claude/gallant-heisenberg-ownvfb
+      - name: Run pipeline (Wave 1 IG → Wave 2 TT → stats + report)
         env:
           APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
-        run: python3 scripts/apify_scraper.py > apify_results.json
+        run: python3 scripts/run_pipeline.py > pipeline_report.json
       - name: Commit results
         run: |
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add apify_results.json
-          git diff --staged --quiet || git commit -m "data: competitor social media scrape $(date -u +%Y-%m-%d)"
+          git add pipeline_report.json
+          git diff --staged --quiet || git commit -m "data: pipeline report $(date -u +%Y-%m-%d)"
           git push
