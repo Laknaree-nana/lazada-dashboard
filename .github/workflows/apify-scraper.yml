@@ -6,19 +6,19 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run Apify scraper
+      - name: Run wave-based pipeline (IG → TikTok) and generate report
         env:
           APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
-        run: python3 scripts/apify_scraper.py > apify_results.json
+        run: python3 scripts/run_report.py > competitor_social_report.txt
       - name: Commit results
         run: |
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add apify_results.json
-          git diff --staged --quiet || git commit -m "data: competitor social media scrape $(date -u +%Y-%m-%d)"
+          git add competitor_social_report.txt social_report_data.json
+          git diff --staged --quiet || git commit -m "data: competitor social report $(date -u +%Y-%m-%d)"
           git push
