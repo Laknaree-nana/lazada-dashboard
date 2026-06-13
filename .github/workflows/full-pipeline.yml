@@ -1,0 +1,25 @@
+name: Full Competitor Social Report Pipeline
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run full pipeline
+        env:
+          APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
+        run: python3 scripts/pipeline.py 2>&1 | tee pipeline_run.log
+      - name: Commit results
+        run: |
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add report_output.txt apify_results.json pipeline_run.log
+          git diff --staged --quiet || git commit -m "data: full pipeline run $(date -u +%Y-%m-%d)"
+          git push
