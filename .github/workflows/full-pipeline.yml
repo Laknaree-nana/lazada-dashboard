@@ -12,14 +12,40 @@ jobs:
         with:
           ref: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify API key is present
+        env:
+          APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
+        run: |
+          if [ -z "$APIFY_API_KEY" ]; then
+            echo "ERROR: APIFY_API_KEY secret is empty or not set"
+            exit 1
+          fi
+          echo "APIFY_API_KEY is set (length=${#APIFY_API_KEY})"
+
       - name: Run full pipeline
         env:
           APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
-        run: python3 scripts/pipeline.py 2>&1 | tee pipeline_run.log
+        run: |
+          set -o pipefail
+          python3 scripts/pipeline.py 2>&1 | tee pipeline_run.log
+
+      - name: Upload report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-report
+          path: |
+            report_output.txt
+            apify_results.json
+            pipeline_run.log
+          if-no-files-found: warn
+
       - name: Commit results
+        if: success()
         run: |
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add report_output.txt apify_results.json pipeline_run.log
+          git add report_output.txt apify_results.json pipeline_run.log || true
           git diff --staged --quiet || git commit -m "data: full pipeline run $(date -u +%Y-%m-%d)"
-          git push
+          git push || echo "Push failed (branch protection?) — artifact upload is the primary output"
